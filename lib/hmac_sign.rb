@@ -25,10 +25,6 @@ class HmacSign
 
     string = "#{method}\n#{@host}\n#{path}\n#{@params}"
 
-    # This is b/c we need blank space encoded as %20 instead of +
-    # I'm not sure about this, I think should be removed
-    string.gsub!("+","%20")
-
     raise "secret_key is nil!!!, I can't make the signature" if @secret_key.nil?
 
     hmac_digest = OpenSSL::HMAC.digest(HmacSign.digest, @secret_key, string)

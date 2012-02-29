@@ -44,8 +44,10 @@ opt = ArgParser.parse(ARGV)
 
 if opt.key and opt.uri
   signed_uri = Signature.gen_from_uri! opt.uri, 'GET', opt.key
-  puts "Signed Uri:"
-  puts "\n\n#{signed_uri}"
+  puts "*** Signed Uri: ***\n"
+  puts "#{signed_uri}"
+  puts "\n\n*** Curl command: ***\n"
+  puts "curl -X 'GET' #{signed_uri}"
 else
  ArgParser.parse(["-h"])
 end

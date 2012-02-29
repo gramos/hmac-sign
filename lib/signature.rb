@@ -1,7 +1,7 @@
 require 'base64'
 require 'net/http'
 
-class Signature
+class HmacSign
 
   def initialize(host, secret_key)
     @host       = host
@@ -31,7 +31,7 @@ class Signature
 
     raise "secret_key is nil!!!, I can't make the signature" if @secret_key.nil?
 
-    hmac_digest = OpenSSL::HMAC.digest(Signature.digest, @secret_key, string)
+    hmac_digest = OpenSSL::HMAC.digest(HmacSign.digest, @secret_key, string)
     @signature = Base64.encode64(hmac_digest).strip
   end
 
@@ -50,7 +50,7 @@ class Signature
 
   def self.gen_from_uri!(uri, method, secret_key)
     uri = URI(uri)
-    s = Signature.new "#{uri.scheme}://#{uri.host}", secret_key
+    s = HmacSign.new "#{uri.scheme}://#{uri.host}", secret_key
     query = uri.query || ""
     s.gen_uri! method, uri.path, query
   end

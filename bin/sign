@@ -5,7 +5,7 @@ lib_path = File.join lib_path, "../lib"
 
 require 'optparse'
 require 'ostruct'
-require File.join(lib_path,'signature')
+require File.join(lib_path,'hmac_sign')
 
 class ArgParser
   def self.parse(args)
@@ -43,7 +43,7 @@ end
 opt = ArgParser.parse(ARGV)
 
 if opt.key and opt.uri
-  signed_uri = Signature.gen_from_uri! opt.uri, 'GET', opt.key
+  signed_uri = HmacSign.gen_from_uri! opt.uri, 'GET', opt.key
   puts "*** Signed Uri: ***\n"
   puts "#{signed_uri}"
   puts "\n\n*** Curl command: ***\n"

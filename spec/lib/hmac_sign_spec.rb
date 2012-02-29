@@ -1,7 +1,7 @@
 require 'minitest/autorun'
-require File.expand_path 'lib/signature'
+require File.expand_path 'lib/hmac_sign'
 
-describe Signature do
+describe HmacSign do
 
   before do
     @host        = 'http://localhost'
@@ -11,7 +11,7 @@ describe Signature do
     @request     = Net::HTTP::Get.new "#{@host}/#{@path}"
     @secret_key  = '9ca4e1cd-6820-4150-b6b0-1619c0204055'
     @pre_generated_sign = "/500YuMDv5FO4OOKos43GUKFCuRsx0D0oekqDM06MO4="
-    @signature = Signature.new @host, @secret_key
+    @signature = HmacSign.new @host, @secret_key
     @method    = 'GET'
   end
 
@@ -42,6 +42,6 @@ describe Signature do
 
   it "gen_from_url! should return the signed uri" do
     uri = "http://localhost/smrt/0.01/#{@account_id}/Projects?KeyId=test"
-    Signature.gen_from_uri!(uri, 'GET', @secret_key).must_equal "#{uri}&Signature=#{@pre_generated_sign}"
+    HmacSign.gen_from_uri!(uri, 'GET', @secret_key).must_equal "#{uri}&Signature=#{@pre_generated_sign}"
   end
 end

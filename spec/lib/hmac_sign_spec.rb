@@ -4,13 +4,13 @@ require File.expand_path 'lib/hmac_sign'
 describe HmacSign do
 
   before do
-    @host        = 'http://localhost'
-    @account_id  = '1b8ffe44-acf7-454a-b78b-d55c18151ee4'
-    @path        = "/smrt/0.01/#{@account_id}/Projects"
+    @host        = 'http://mydomain.com'
+    @account_id  = '12345'
+    @path        = "/#{@account_id}/Projects"
     @params      = {'KeyId' => 'test'}
     @request     = Net::HTTP::Get.new "#{@host}/#{@path}"
-    @secret_key  = '9ca4e1cd-6820-4150-b6b0-1619c0204055'
-    @pre_generated_sign = "/500YuMDv5FO4OOKos43GUKFCuRsx0D0oekqDM06MO4="
+    @secret_key  = 'abcd'
+    @pre_generated_sign = "KLjzM3z0m42jAmQHZrTAzTAS0iUEWqlUXvrCsvfdE28="
     @signature = HmacSign.new @host, @secret_key
     @method    = 'GET'
   end
@@ -30,9 +30,8 @@ describe HmacSign do
   end
 
   it "gen_uri! should return the uri string" do
-    uri = "http://localhost/smrt/0.01/#{@account_id}/Projects?KeyId=test&Signature=#{@pre_generated_sign}"
+    uri = "http://mydomain.com/#{@account_id}/Projects?KeyId=test&Signature=#{@pre_generated_sign}"
     @signature.gen_uri!(@method, @path, @params).must_equal uri
-    # puts @signature.gen_uri!(@method, @path, @params)
   end
 
   it "gen! should fill @uri" do
@@ -41,7 +40,7 @@ describe HmacSign do
   end
 
   it "gen_from_url! should return the signed uri" do
-    uri = "http://localhost/smrt/0.01/#{@account_id}/Projects?KeyId=test"
+    uri = "http://mydomain.com/#{@account_id}/Projects?KeyId=test"
     HmacSign.gen_from_uri!(uri, 'GET', @secret_key).must_equal "#{uri}&Signature=#{@pre_generated_sign}"
   end
 end

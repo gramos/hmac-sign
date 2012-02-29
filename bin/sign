@@ -1,0 +1,53 @@
+#!/usr/bin/ruby
+
+lib_path = File.expand_path(File.dirname(__FILE__))
+lib_path = File.join lib_path, "../lib"
+
+require 'optparse'
+require 'ostruct'
+require File.join(lib_path,'signature')
+
+class ArgParser
+  def self.parse(args)
+    options = OpenStruct.new
+
+    gen_sign = <<-EOS
+    HmacSign takes an string that represents an url and returns the
+    same uri with the Signature param added with the signature as value.
+
+    Example: hmac_sign --key 9ca4e1cd http://localhost/api/Users
+
+    EOS
+
+    opts = OptionParser.new do |opts|
+      opts.on("-k", "--key KEY", "Key to be used for signature generation.") do |key|
+        options.key = key
+      end
+
+      opts.on("-u", "--uri URI", "Url string.") do |uri|
+        options.uri = uri
+      end
+
+      opts.on_tail("-h", "--help", "Show this message") do
+        puts opts
+
+        exit
+      end
+    end
+
+    opts.parse!(args)
+    options
+  end
+end
+
+opt = ArgParser.parse(ARGV)
+
+if opt.key and opt.uri
+  signed_uri = Signature.gen_from_uri! opt.uri, 'GET', opt.key
+  puts "Signed Uri:"
+  puts "\n\n#{signed_uri}"
+else
+ ArgParser.parse(["-h"])
+end
+
+

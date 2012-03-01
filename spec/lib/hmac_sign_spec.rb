@@ -40,9 +40,19 @@ describe HmacSign do
     @signature.uri.must_be_kind_of URI
   end
 
-  it "gen_from_url! should return the signed uri" do
-    uri = "http://mydomain.com/#{@account_id}/Projects?KeyId=test"
-    HmacSign.gen_from_uri!(uri, 'GET', @secret_key, true).must_equal "#{uri}&Signature=#{@uri_escaped_sign}"
-  end
+  describe "gen_from_uri!" do
+    before do
+      @uri = "http://mydomain.com/#{@account_id}/Projects?KeyId=test"
+    end
 
+    it "should return the signed uri" do
+      HmacSign.gen_from_uri!(@uri, 'GET', @secret_key, true).
+        must_equal "#{@uri}&Signature=#{@uri_escaped_sign}"
+    end
+
+    it "should return the the signature" do
+      HmacSign.gen_from_uri!(@uri, 'GET', @secret_key).
+        must_equal @pre_generated_sign
+    end
+  end
 end

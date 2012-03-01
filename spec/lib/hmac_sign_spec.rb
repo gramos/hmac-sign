@@ -14,6 +14,8 @@ describe HmacSign do
     @uri_escaped_sign   = CGI.escape @pre_generated_sign
     @signature = HmacSign.new @host, @secret_key
     @method    = 'GET'
+    @uri = "http://mydomain.com/#{@account_id}/Projects?KeyId=test"
+    @signed_uri = "#{@uri}&Signature=#{@uri_escaped_sign}"
   end
 
   it "should return an string with resulting signature" do
@@ -31,8 +33,7 @@ describe HmacSign do
   end
 
   it "gen_uri! should return the uri string" do
-    uri = "http://mydomain.com/#{@account_id}/Projects?KeyId=test&Signature=#{@uri_escaped_sign}"
-    @signature.gen_uri!(@method, @path, @params).must_equal uri
+    @signature.gen_uri!(@method, @path, @params).must_equal @signed_uri
   end
 
   it "gen! should fill @uri" do
@@ -41,18 +42,16 @@ describe HmacSign do
   end
 
   describe "gen_from_uri!" do
-    before do
-      @uri = "http://mydomain.com/#{@account_id}/Projects?KeyId=test"
-    end
 
     it "should return the signed uri" do
       HmacSign.gen_from_uri!(@uri, 'GET', @secret_key, true).
-        must_equal "#{@uri}&Signature=#{@uri_escaped_sign}"
+        must_equal @signed_uri
     end
 
     it "should return the the signature" do
       HmacSign.gen_from_uri!(@uri, 'GET', @secret_key).
         must_equal @pre_generated_sign
     end
+
   end
 end

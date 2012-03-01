@@ -1,5 +1,6 @@
 require 'base64'
 require 'net/http'
+require 'cgi'
 
 class HmacSign
 
@@ -32,7 +33,7 @@ class HmacSign
   end
 
   def uri
-    URI("#{@host}#{@path}?#{@params}&Signature=#{@signature}")
+    URI("#{@host}#{@path}?#{@params}&Signature=#{CGI.escape @signature}")
   end
 
   def gen_hash!(method, path, params)
@@ -44,10 +45,11 @@ class HmacSign
     uri.to_s
   end
 
-  def self.gen_from_uri!(uri, method, secret_key)
+  def self.gen_from_uri!(uri, method, secret_key, gen_url = false)
     uri = URI(uri)
     s = HmacSign.new "#{uri.scheme}://#{uri.host}", secret_key
     query = uri.query || ""
-    s.gen_uri! method, uri.path, query
+    return s.gen_uri! method, uri.path, query if gen_url
+    s.gen! method, uri.path, query
   end
 end

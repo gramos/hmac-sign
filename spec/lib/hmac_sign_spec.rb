@@ -11,6 +11,7 @@ describe HmacSign do
     @request     = Net::HTTP::Get.new "#{@host}/#{@path}"
     @secret_key  = 'abcd'
     @pre_generated_sign = "KLjzM3z0m42jAmQHZrTAzTAS0iUEWqlUXvrCsvfdE28="
+    @uri_escaped_sign   = CGI.escape @pre_generated_sign
     @signature = HmacSign.new @host, @secret_key
     @method    = 'GET'
   end
@@ -30,7 +31,7 @@ describe HmacSign do
   end
 
   it "gen_uri! should return the uri string" do
-    uri = "http://mydomain.com/#{@account_id}/Projects?KeyId=test&Signature=#{@pre_generated_sign}"
+    uri = "http://mydomain.com/#{@account_id}/Projects?KeyId=test&Signature=#{@uri_escaped_sign}"
     @signature.gen_uri!(@method, @path, @params).must_equal uri
   end
 
@@ -41,6 +42,7 @@ describe HmacSign do
 
   it "gen_from_url! should return the signed uri" do
     uri = "http://mydomain.com/#{@account_id}/Projects?KeyId=test"
-    HmacSign.gen_from_uri!(uri, 'GET', @secret_key).must_equal "#{uri}&Signature=#{@pre_generated_sign}"
+    HmacSign.gen_from_uri!(uri, 'GET', @secret_key, true).must_equal "#{uri}&Signature=#{@uri_escaped_sign}"
   end
+
 end

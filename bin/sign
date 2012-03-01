@@ -43,7 +43,7 @@ end
 opt = ArgParser.parse(ARGV)
 
 if opt.key and opt.uri
-  signed_uri = HmacSign.gen_from_uri! opt.uri, 'GET', opt.key
+  signed_uri = HmacSign.gen_from_uri! opt.uri, 'GET', opt.key, true
   puts "*** Signed Uri: ***\n"
   puts "#{signed_uri}"
   puts "\n\n*** Curl command: ***\n"

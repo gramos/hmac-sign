@@ -4,13 +4,13 @@ require File.expand_path 'lib/hmac_sign'
 describe HmacSign do
 
   before do
-    @host        = 'http://mydomain.com'
+    @host        = 'mydomain.com'
     @account_id  = '12345'
     @path        = "/#{@account_id}/Projects"
     @params      = {'KeyId' => 'test'}
     @request     = Net::HTTP::Get.new "#{@host}/#{@path}"
     @secret_key  = 'abcd'
-    @pre_generated_sign = "KLjzM3z0m42jAmQHZrTAzTAS0iUEWqlUXvrCsvfdE28="
+    @pre_generated_sign = "OoihvaZkEgfPoJ/jHVIhvFFeCM4fe7iOx7/KOh4EfE4="
     @uri_escaped_sign   = CGI.escape @pre_generated_sign
     @signature = HmacSign.new @host, @secret_key
     @method    = 'GET'

@@ -45,8 +45,16 @@ class HmacSign
     uri.to_s
   end
 
+  def self.remove_signature_param(url)
+    match  = url.match /(?<signature>[&?]Signature=.*)(&.*)?/
+    _url   = url.gsub(/#{match['signature']}/, '') unless match.nil?
+    _url ||= url
+    _url
+  end
+
   def self.gen_from_uri!(args = {})
-    uri = URI(args[:url])
+    uri = remove_signature_param args[:url]
+    uri = URI(uri)
     s = HmacSign.new "#{uri.host}", args[:secret_key], uri.scheme
     params = uri.query || args[:params] || ""
     return s.gen_uri! args[:method], uri.path, params if args[:gen_url]

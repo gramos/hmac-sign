@@ -26,6 +26,8 @@ class HmacSign
     @path = path
 
     string = "#{method}\n#{@host}\n#{path}\n#{@params}"
+    # This is b/c we need blank space encoded as %20 instead of +
+    string.gsub!("+","%20")
 
     raise "secret_key is nil!!!, I can't make the signature" if @secret_key.nil?
     hmac_digest = OpenSSL::HMAC.digest(HmacSign.digest, @secret_key, string)
@@ -46,16 +48,18 @@ class HmacSign
   end
 
   def self.remove_signature_param(url)
-    match  = url.match /(?<signature>[&?]Signature=.*)(&.*)?/
-    _url   = url.gsub(/#{match['signature']}/, '') unless match.nil?
+    match  = url.match /(?<Signature>[&?]Signature=.*)(&.*)?/
+    _url   = url.gsub(/#{match['Signature']}/, '') unless match.nil?
     _url ||= url
     _url
   end
 
   def self.gen_from_uri!(args = {})
     uri = remove_signature_param args[:url]
+
     uri = URI(uri)
     s = HmacSign.new "#{uri.host}", args[:secret_key], uri.scheme
+    args[:params].delete 'Signature' if args[:params]
     params = uri.query || args[:params] || ""
     return s.gen_uri! args[:method], uri.path, params if args[:gen_url]
     s.gen! args[:method], uri.path, params

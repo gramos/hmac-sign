@@ -74,8 +74,8 @@ describe HmacSign do
 
     it "should remove Signature Param when is present" do
       @args.merge!(:url => "#{@uri}&Signature='xxx'")
-      puts @args[:url]
       HmacSign.gen_from_uri!(@args).must_equal @pre_generated_sign
     end
+
   end
 end

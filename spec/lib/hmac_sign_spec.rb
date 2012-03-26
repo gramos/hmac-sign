@@ -58,7 +58,11 @@ describe HmacSign do
       HmacSign.gen_from_uri!(@args).must_equal @pre_generated_sign
     end
 
-    it "should take params as argument for POST PUT methods" do
+    it "should take params as argument for POST PUT methods
+        On POST PUT request the params comes into the body of the request
+        so we need to add another way to take the params besides the query
+        string" do
+
       uri = "http://mydomain.com/#{@account_id}/Projects"
       @args.merge!(:KeyId => 'test', :secret_key => @secret_key,
                    :method => 'POST', :url => uri,

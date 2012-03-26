@@ -45,9 +45,8 @@ describe HmacSign do
 
     before do
       @args  = { :url => @uri,
-                 :method => 'GET',
-                 :secret_key => @secret_key}
-
+        :method => 'GET',
+        :secret_key => @secret_key}
     end
 
     it "should return the signed uri" do
@@ -59,5 +58,14 @@ describe HmacSign do
       HmacSign.gen_from_uri!(@args).must_equal @pre_generated_sign
     end
 
+    it "should take params as argument for POST PUT methods" do
+      uri = "http://mydomain.com/#{@account_id}/Projects"
+      @args.merge!(:KeyId => 'test', :secret_key => @secret_key,
+                   :method => 'POST', :url => uri,
+                   :params => {:name => 'Bruce', :surname => 'Lee'})
+
+      pre_generated_sign = 'QgvP6mjgvZHkIHOK/Aby9YaCw8s92dfomPAtcm76Yyc='
+      HmacSign.gen_from_uri!(@args).must_equal pre_generated_sign
+    end
   end
 end

@@ -16,7 +16,7 @@ class HmacSign
 
   def to_param(params)
     params.collect do |key, value|
-      "#{key}=#{value}"
+      "#{key}=#{CGI.escape value}"
     end.sort * '&'
   end
 
@@ -28,7 +28,6 @@ class HmacSign
     string = "#{method}\n#{@host}\n#{path}\n#{@params}"
 
     raise "secret_key is nil!!!, I can't make the signature" if @secret_key.nil?
-
     hmac_digest = OpenSSL::HMAC.digest(HmacSign.digest, @secret_key, string)
     @signature = Base64.encode64(hmac_digest).strip
   end
@@ -46,11 +45,11 @@ class HmacSign
     uri.to_s
   end
 
-  def self.gen_from_uri!(uri, method, secret_key, gen_url = false)
-    uri = URI(uri)
-    s = HmacSign.new "#{uri.host}", secret_key, uri.scheme
-    query = uri.query || ""
-    return s.gen_uri! method, uri.path, query if gen_url
-    s.gen! method, uri.path, query
+  def self.gen_from_uri!(args = {})
+    uri = URI(args[:url])
+    s = HmacSign.new "#{uri.host}", args[:secret_key], uri.scheme
+    params = uri.query || args[:params] || ""
+    return s.gen_uri! args[:method], uri.path, params if args[:gen_url]
+    s.gen! args[:method], uri.path, params
   end
 end

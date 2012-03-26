@@ -43,14 +43,20 @@ describe HmacSign do
 
   describe "gen_from_uri!" do
 
+    before do
+      @args  = { :url => @uri,
+                 :method => 'GET',
+                 :secret_key => @secret_key}
+
+    end
+
     it "should return the signed uri" do
-      HmacSign.gen_from_uri!(@uri, 'GET', @secret_key, true).
+      HmacSign.gen_from_uri!(@args.merge(:gen_url => true)).
         must_equal @signed_uri
     end
 
     it "should return the the signature" do
-      HmacSign.gen_from_uri!(@uri, 'GET', @secret_key).
-        must_equal @pre_generated_sign
+      HmacSign.gen_from_uri!(@args).must_equal @pre_generated_sign
     end
 
   end

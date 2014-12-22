@@ -1,4 +1,4 @@
-Amasi (Amazon Sinature)
+Amasi (Amazon Signature)
 =======================
 
 With this gem you can sign http requests to easily interact with

@@ -11,7 +11,7 @@ but the purpose of this gem is only provide request signature
 by using authorization header way proposed by amazon.
 
 Example PUT an S3 object:
-=========================
+-------------------------
 
 ```ruby
 
